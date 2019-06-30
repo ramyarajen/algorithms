@@ -21,7 +21,7 @@ namespace _2_StringToBinary
 
             foreach (string path in pathSplit)
             {
-                if (path != "..")
+                if (path != ".." && path != ".")
                 {
                     pathStack.Push(path);
                     if (!countMap.ContainsKey(path))
@@ -30,8 +30,24 @@ namespace _2_StringToBinary
                     }
                     countMap[path]++;
                 }
-                else
+                else if (path == ".")
                 {
+                    //. means in the current directory
+                    if (pathStack.Count > 0)
+                    {
+                        string currentPathInStack = pathStack.Peek();
+                        countMap[currentPathInStack]++;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nInput String: {0}", cdStr);
+                        Console.WriteLine("Input String is malformed - Path went before root");
+                        return null;
+                    }
+                }
+                else if (path == "..")
+                {
+                    //.. means going to parent directory
                     if (pathStack.Count > 0)
                     {
                         pathStack.Pop();
@@ -88,8 +104,21 @@ namespace _2_StringToBinary
             string input6 = "a\\b\\c\\..\\..\\b\\d";
             StringUtil.ChangeDirectoryVisit(input6);
 
-            string input7 = "a\\b\\c\\..\\..\\..";
+            string input7 = "a\\b\\.\\.\\c";
             StringUtil.ChangeDirectoryVisit(input7);
+
+            //Invalid Paths - Gone above the root
+            string input10 = "a\\..";
+            StringUtil.ChangeDirectoryVisit(input10);
+
+            string input11 = "..";
+            StringUtil.ChangeDirectoryVisit(input11);
+
+            string input12 = ".";
+            StringUtil.ChangeDirectoryVisit(input12);
+
+            string input13 = "a\\..\\..";
+            StringUtil.ChangeDirectoryVisit(input13);
         }
     }
 }
